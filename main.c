@@ -7,15 +7,46 @@
 * @Last Modified time: 2016-08-06 12:19:12
 */
 
-#include <stdio.h>
-
-int main() 
+#include <iostream>
+#include <string>
+#ifndef SALES_ITEM_H
+#define SALES_ITEM_H
+using std::istream;using std::ostream;
+class Sales_item
 {
-    int a =100;
-    printf("a= %d\n",a);
-     int b =100;
-    printf("b= %d\n",b);
-    printf("%d\n", a+b);
-    printf("hello world!!\n");
-    return 0;
+public:
+	Sales_item(const std::string &book, unsigned units, double amount) :
+		isbn(book), units_sold(units), revenue(amount) {}
+	Sales_item() :units_sold(0), revenue(0.0) {}
+	friend std::ostream& operator<<(std::ostream&, const Sales_item&);
+	double avg_price()const;
+	bool same_isbn(const Sales_item &rhs)const
+	{
+		return isbn == rhs.isbn;
+	}
+
+private:
+	std::string isbn;
+	unsigned units_sold;
+	double revenue;
+};
+inline ostream& operator<<(ostream& out, const Sales_iteam& s)
+{
+	out << s.isbn << "\t" << s.units_sold << "\t"
+		<< s.revenue << "\t" << s.avg_price();
+	return out;
 }
+inline double Sales_item::avg_price()const
+{
+	if (units_sold)
+	{
+		return revenue / units_sold;
+	}
+	else
+	{
+		return 0;
+	}
+}
+#endif // !SALES_ITEM_H
+
+ 
