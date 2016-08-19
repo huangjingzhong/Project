@@ -1,0 +1,156 @@
+//纯虚函数与抽象类
+#include <iostream>
+
+using namespace std;
+
+//这个类是一个抽象类-抽象数据类型：
+//抽象类:
+//1.包含一个或多个纯虚函数的类都是抽象类。
+//2.不能创建这个类的对象，应该继承它。
+//3.务必覆盖从这个类继承的纯虚函数
+
+class Shape
+{
+public:
+    Shape() {}
+    virtual ~Shape() {}
+    virtual double GetArea()=0;  //纯虚函数
+    virtual double GetPerim()=0;
+    virtual void Draw() = 0;
+};
+//因为这是一个纯虚函数，可以不写，一般也都不写！
+void Shape::Draw()
+{
+    cout << "Drawed :" << endl;
+}
+
+
+class Circle :public Shape
+{
+public:
+    Circle(int radius) :itsRadius(radius) {}
+    //任何一个成员函数是虚函数，就把析构函数写成虚析构函数。
+    ~Circle() {}
+    double GetArea()
+    {
+        return 3.14*itsRadius*itsRadius;
+    }
+    double GetPerim()
+    {
+        return 2 * 3.14*itsRadius;
+    }
+    void Draw();
+
+private:
+    int itsRadius;
+
+};
+void Circle::Draw()
+{
+    Shape::Draw();
+    cout << "Circle draw routine here!\n";
+}
+
+
+
+class Rectangle :public Shape
+{
+public:
+    Rectangle(int len, int width) :itsWidth(width), itsLength(len) {}
+    virtual ~Rectangle() {}
+    double GetArea()
+    {
+        return itsWidth*itsLength;
+    }
+    double GetPerim()
+    {
+        return 2* itsWidth + 2* itsLength;
+    }
+    virtual int GetLength()
+    {
+        return itsLength;
+    }
+    virtual int GetWidth()
+    {
+        return itsWidth;
+    }
+
+    void Draw();
+
+private:
+    int itsWidth;
+    int itsLength;
+};
+void Rectangle::Draw()
+{
+    Shape::Draw();
+    for (int i = 0; i < itsLength; i++)
+    {
+        for (int j = 0; j < itsWidth; j++)
+            cout << "X";
+        cout << "\n";
+    }
+}
+
+class Square :public Rectangle
+{
+public:
+    Square(int len);
+    Square(int len,int width);
+    virtual ~Square() {}
+    double GetPerim() { return 4 * GetLength();}
+
+private:
+};
+Square::Square(int len) :Rectangle(len, len) {}
+Square::Square(int len, int width) : Rectangle(len, width)
+{
+    if (GetLength() != GetWidth())
+    {
+        cout << "Error, not a square... a Rectangle??\n";
+    }
+}
+
+int main()
+{
+    int choice;
+    bool fQuit = false;
+    Shape * sp=nullptr;
+    while (fQuit == false)
+    {
+        cout << "(1)Circle  (2)Rectangle (3)Square (0)Quit:";
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            sp = new Circle(5);
+            break;
+        case 2:
+            sp = new Rectangle(4, 6);
+            break;
+        case 3:
+            sp = new Square(5);
+            break;
+        case 0:
+            fQuit = true;
+            break;
+        }
+        if (fQuit == false)
+        {
+            sp->Draw();
+            delete sp;
+            cout << endl;
+        }
+    }
+
+    //Circle a(8);
+    //a.Draw();
+    //Rectangle b(7, 3);
+    //b.Draw();
+    //Square c(4);
+    //c.Draw();
+
+    ////Shape a;
+    return 0;
+}
